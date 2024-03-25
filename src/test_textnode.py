@@ -3,33 +3,27 @@ import unittest
 from textnode import TextNode
 
 class TestTextNode(unittest.TestCase):
-    def test_equal_similar(self):
-        a_node = TextNode("This is a text node", "bold")
-        another_node = TextNode("This is a text node", "bold")
+    def setUp(self):
+        self.default_node = TextNode("This is a text node", "bold")
+        self.standard_node = TextNode("This is a text node", "bold", "https://www.google.com")
+    
+    def test_similar_properties(self):
+        another_default_node = TextNode("This is a text node", "bold")
+        self.assertEqual(self.default_node, another_default_node)
 
-        self.assertEqual(a_node, another_node)
+    def test_different_properties(self):
+        another_default_node = TextNode("This is another text node", "italic")
+        self.assertNotEqual(self.default_node, another_default_node)
 
-    def test_not_equal_different(self):
-        a_node = TextNode("This is a text node", "bold")
-        another_node = TextNode("This is another text node", "italic")
+    def test_similar_url(self):
+        another_standard_node = TextNode("This is a text node", "bold", "https://www.google.com")
+        self.assertEqual(self.standard_node, another_standard_node)
 
-        self.assertNotEqual(a_node, another_node)
+    def test_default_url(self):
+        self.assertIsNone(self.default_node.url)
 
-    def test_equal_similar_url(self):
-        a_node = TextNode("This is a text node", "bold", "https://www.google.com")
-        another_node = TextNode("This is a text node", "bold", "https://www.google.com")
-
-        self.assertEqual(a_node, another_node)
-
-    def test_equal_default_url(self):
-        a_node = TextNode("This is a text node", "bold")
-
-        self.assertEqual(a_node.url, None)
-
-    def test_equal_representation(self):
-        a_node = TextNode("This is a text node", "bold", "https://www.google.com")
-
-        self.assertEqual(repr(a_node), "TextNode(This is a text node, bold, https://www.google.com)")
+    def test_representation(self):
+        self.assertEqual(repr(self.standard_node), "TextNode(This is a text node, bold, https://www.google.com)")
 
 if __name__ == "__main__":
     unittest.main()
