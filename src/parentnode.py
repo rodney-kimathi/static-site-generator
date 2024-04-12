@@ -2,33 +2,22 @@ from htmlnode import HTMLNode
 from leafnode import LeafNode
 
 class ParentNode(HTMLNode):
-    def __init__(self, children, tag=None, props=None):
+    def __init__(self, tag, children, props=None):
         super().__init__(tag, None, children, props)
 
     def to_html(self):
         if not self.tag:
-            raise ValueError("Tag is required")
+            raise ValueError("Invalid HTML: no tag")
         
-        if self.children is None:
-            raise ValueError("Children are required")
+        if not self.children:
+            raise ValueError("Invalid HTML: no children")
         
-        opening_tag = f"<{self.tag}{super().props_to_html()}>"
-        closing_tag = f"</{self.tag}>"
-        content = ""
-
-        if len(self.children) == 0:
-            return opening_tag + closing_tag
+        contents = ""
 
         for child in self.children:
-            if isinstance(child, LeafNode):
-                content += child.to_html()
-            else:
-                if content:
-                    content += child.to_html()
-                else:
-                    content = child.to_html()
-        
-        return opening_tag + content + closing_tag
+            contents += child.to_html()
+
+        return f"<{self.tag}{self.props_to_html()}>{contents}</{self.tag}>"
     
     def __repr__(self):
-        return f"ParentNode({self.children}, {self.tag}, {self.props})"
+        return f"ParentNode({self.tag}, {self.children}, {self.props})"

@@ -6,25 +6,25 @@ from leafnode import LeafNode
 class TestParentNode(unittest.TestCase):
     def setUp(self):
         self.props = {"class": "a-class"}
-        self.normal_text = LeafNode("Normal")
-        self.bold_text = LeafNode("Bold", "b")
-        self.italic_text = LeafNode("Italic", "i")
-        self.anchor_leaf_node = LeafNode("Anchor", "a")
-        self.paragraph_parent_node = ParentNode([], "p")
-        self.default_parent_node = ParentNode([])
-        self.standard_parent_node = ParentNode([], "div")
+        self.normal_text = LeafNode("span", "Normal")
+        self.bold_text = LeafNode("b", "Bold")
+        self.italic_text = LeafNode("i", "Italic")
+        self.anchor_leaf_node = LeafNode("a", "Anchor")
+        self.paragraph_parent_node = ParentNode("p", [])
+        self.default_parent_node = ParentNode("span", [])
+        self.standard_parent_node = ParentNode("div", [])
 
     def test_default_properties(self):
+        self.assertEqual(self.default_parent_node.tag, "span")
         self.assertListEqual(self.default_parent_node.children, []) # type: ignore
-        self.assertIsNone(self.default_parent_node.tag)
         self.assertIsNone(self.default_parent_node.props)
 
     def test_standard_properties(self):
         self.standard_parent_node.children.append(self.paragraph_parent_node) # type: ignore
         self.standard_parent_node.props = self.props
 
-        self.assertListEqual(self.standard_parent_node.children, [self.paragraph_parent_node]) # type: ignore
         self.assertEqual(self.standard_parent_node.tag, "div")
+        self.assertListEqual(self.standard_parent_node.children, [self.paragraph_parent_node]) # type: ignore
         self.assertIn("class", self.standard_parent_node.props)
 
     def test_nested_parent_nodes(self):
@@ -40,6 +40,7 @@ class TestParentNode(unittest.TestCase):
         )
 
     def test_nested_leaf_nodes(self):
+        self.normal_text.props = self.props
         self.bold_text.props = self.props
         self.italic_text.props = self.props
         self.paragraph_parent_node.props = self.props
@@ -47,12 +48,12 @@ class TestParentNode(unittest.TestCase):
 
         self.assertEqual(
             self.paragraph_parent_node.to_html(),
-            "<p class=\"a-class\">Normal<b class=\"a-class\">Bold</b><i class=\"a-class\">Italic</i></p>"
+            "<p class=\"a-class\"><span class=\"a-class\">Normal</span><b class=\"a-class\">Bold</b><i class=\"a-class\">Italic</i></p>"
         )
 
     def test_nested_parent_and_nested_leaf_nodes(self):
-        paragraph_1 = ParentNode([], "p")
-        paragraph_2 = ParentNode([], "p")
+        paragraph_1 = ParentNode("p", [])
+        paragraph_2 = ParentNode("p", [])
 
         paragraph_1.children.extend([self.bold_text, self.italic_text]) # type: ignore
         paragraph_2.children.append(self.anchor_leaf_node) # type: ignore
@@ -65,7 +66,7 @@ class TestParentNode(unittest.TestCase):
         )
 
     def test_representation(self):
-        self.assertEqual(repr(self.standard_parent_node), "ParentNode([], div, None)")
+        self.assertEqual(repr(self.standard_parent_node), "ParentNode(div, [], None)")
 
 if __name__ == "__main__":
     unittest.main()
