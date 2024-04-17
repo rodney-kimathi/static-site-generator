@@ -1,3 +1,4 @@
+import re
 from leafnode import LeafNode
 from text_type import TextType
 
@@ -59,6 +60,14 @@ class TextNode:
             new_nodes.extend(splits)
 
         return new_nodes
+    
+    @classmethod
+    def extract_markdown_images(cls, text):
+        return re.findall(r"!\[(.+?)\]\((.+?)\)", text)
+    
+    @classmethod
+    def extract_markdown_links(cls, text):
+        return re.findall(r"\[(.+?)\]\((.+?)\)", text)
     
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
