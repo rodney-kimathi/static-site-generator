@@ -36,5 +36,29 @@ class TextNode:
 
         return leaf_node
     
+    @classmethod
+    def parse_text_nodes(cls, old_nodes, delimiter, text_type):
+        new_nodes = []
+
+        for old_node in old_nodes:
+            if type(old_node) != TextNode or old_node.text_type not in TextType.values():
+                new_nodes.append(old_node)
+                continue
+
+            if old_node.text.count(delimiter) % 2 != 0:
+                raise ValueError("Invalid Markdown syntax")
+            
+            splits = old_node.text.split(delimiter)
+
+            for i in range(len(splits)):
+                if i % 2 == 0:
+                    splits[i] = TextNode(splits[i], TextType.TEXT.value)
+                else:
+                    splits[i] = TextNode(splits[i], text_type)
+
+            new_nodes.extend(splits)
+
+        return new_nodes
+    
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
